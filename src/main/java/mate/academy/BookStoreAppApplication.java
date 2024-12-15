@@ -30,8 +30,7 @@ public class BookStoreAppApplication {
 
                 bookService.add(book1);
                 System.out.println(bookService.findAll());
-git             }
+            }
         };
     }
-
 }
