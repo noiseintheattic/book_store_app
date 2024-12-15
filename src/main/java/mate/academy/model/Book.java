@@ -1,9 +1,12 @@
-package mate.academy.book_store_app.model;
+package mate.academy.model;
 
-import jakarta.persistence.*;
-import lombok.Data;
-
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import java.math.BigDecimal;
+import lombok.Data;
 
 @Entity
 @Data
@@ -79,14 +82,14 @@ public class Book {
 
     @Override
     public String toString() {
-        return "Book{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", author='" + author + '\'' +
-                ", isbn='" + isbn + '\'' +
-                ", price=" + price +
-                ", description='" + description + '\'' +
-                ", coverImage='" + coverImage + '\'' +
-                '}';
+        return "Book{"
+                + "id=" + id
+                + ", title='" + title + '\''
+                + ", author='" + author + '\''
+                + ", isbn='" + isbn + '\''
+                + ", price=" + price
+                + ", description='" + description + '\''
+                + ", coverImage='" + coverImage + '\''
+                + '}';
     }
 }

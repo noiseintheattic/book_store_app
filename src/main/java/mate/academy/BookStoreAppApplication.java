@@ -1,14 +1,13 @@
-package mate.academy.book_store_app;
+package mate.academy;
 
-import mate.academy.book_store_app.model.Book;
-import mate.academy.book_store_app.service.BookService;
+import java.math.BigDecimal;
+import mate.academy.model.Book;
+import mate.academy.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-
-import java.math.BigDecimal;
 
 @SpringBootApplication
 public class BookStoreAppApplication {
@@ -31,9 +30,7 @@ public class BookStoreAppApplication {
 
                 bookService.add(book1);
                 System.out.println(bookService.findAll());
-
-
-            }
+git             }
         };
     }
 

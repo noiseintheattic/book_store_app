@@ -1,4 +1,4 @@
-package mate.academy.book_store_app;
+package mate.academy;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

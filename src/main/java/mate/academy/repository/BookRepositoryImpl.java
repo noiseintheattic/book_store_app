@@ -1,21 +1,19 @@
-package mate.academy.book_store_app.repository;
+package mate.academy.repository;
 
 import jakarta.persistence.criteria.CriteriaQuery;
-import mate.academy.book_store_app.exceptions.DataProcessingException;
-import mate.academy.book_store_app.model.Book;
+import java.util.List;
+import mate.academy.exceptions.DataProcessingException;
+import mate.academy.model.Book;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
 public class BookRepositoryImpl implements BookRepository {
 
     private final SessionFactory sessionFactory;
-
 
     @Autowired
     public BookRepositoryImpl(SessionFactory sessionFactory) {
