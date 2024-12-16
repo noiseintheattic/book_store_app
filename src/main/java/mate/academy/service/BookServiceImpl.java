@@ -25,9 +25,4 @@ public class BookServiceImpl implements BookService {
     public List<Book> findAll() {
         return bookRepository.findAll();
     }
-
-    @Autowired
-    public void setBookRepository(BookRepository bookRepository) {
-        this.bookRepository = bookRepository;
-    }
 }
