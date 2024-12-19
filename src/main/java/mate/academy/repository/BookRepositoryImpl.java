@@ -2,23 +2,20 @@ package mate.academy.repository;
 
 import jakarta.persistence.criteria.CriteriaQuery;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import mate.academy.exceptions.DataProcessingException;
+import mate.academy.exceptions.EntityNotFoundException;
 import mate.academy.model.Book;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+@RequiredArgsConstructor
 @Repository
 public class BookRepositoryImpl implements BookRepository {
 
     private final SessionFactory sessionFactory;
-
-    @Autowired
-    public BookRepositoryImpl(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
 
     @Override
     public Book add(Book book) {
@@ -50,7 +47,16 @@ public class BookRepositoryImpl implements BookRepository {
             criteriaQuery.from(Book.class);
             return session.createQuery(criteriaQuery).getResultList();
         } catch (Exception e) {
-            throw new DataProcessingException("Can't find all books.", e);
+            throw new EntityNotFoundException("Can't find all books.", e);
+        }
+    }
+
+    @Override
+    public Book getById(Long id) {
+        try (Session session = sessionFactory.openSession()) {
+            return session.get(Book.class, id);
+        } catch (Exception e) {
+            throw new EntityNotFoundException("Can't get book by id: " + id, e);
         }
     }
 }

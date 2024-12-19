@@ -8,4 +8,7 @@ public interface BookRepository {
     Book add(Book book);
 
     List<Book> findAll();
+
+    Book getById(Long id);
+
 }
