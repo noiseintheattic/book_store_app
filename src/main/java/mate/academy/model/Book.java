@@ -8,8 +8,8 @@ import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import lombok.Data;
 
-@Entity
 @Data
+@Entity
 @Table(name = "books")
 public class Book {
 
@@ -23,5 +23,6 @@ public class Book {
     private BigDecimal price;
     private String description;
     private String coverImage;
+
 
 }
