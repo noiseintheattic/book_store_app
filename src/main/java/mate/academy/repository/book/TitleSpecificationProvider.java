@@ -16,16 +16,5 @@ public class TitleSpecificationProvider implements SpecificationProvider<Book> {
     public Specification<Book> getSpecification(String[] params) {
         return (root, query, criteriaBuilder) -> root.get("title")
                 .in(Arrays.stream(params).toArray());
-
-        /*
-        without lambda:
-        return new Specification<Book>() {
-            @Override
-            public Predicate toPredicate(Root<Book> root,
-            CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
-                return root.get("title").in(Arrays.stream(params).toArray());
-            }
-        };
-         */
     }
 }

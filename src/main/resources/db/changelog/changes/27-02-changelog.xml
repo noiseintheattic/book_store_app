@@ -8,5 +8,4 @@
     <changeSet id="1735307106586-1" author="bart">
         <modifyDataType columnName="price" newDataType="DECIMAL" tableName="books"/>
     </changeSet>
-
 </databaseChangeLog>
