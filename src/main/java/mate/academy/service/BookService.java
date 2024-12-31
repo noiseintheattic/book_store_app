@@ -6,7 +6,6 @@ import mate.academy.dto.BookSearchParametersDto;
 import mate.academy.dto.CreateBookRequestDto;
 
 public interface BookService {
-
     BookDto add(CreateBookRequestDto createBookRequestDto);
 
     List<BookDto> findAll();

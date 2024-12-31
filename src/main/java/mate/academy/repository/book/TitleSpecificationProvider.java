@@ -8,24 +8,15 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class TitleSpecificationProvider implements SpecificationProvider<Book> {
+    private static final String KEY = "title";
+
     @Override
     public String getKey() {
-        return "title";
+        return KEY;
     }
 
     public Specification<Book> getSpecification(String[] params) {
-        return (root, query, criteriaBuilder) -> root.get("title")
+        return (root, query, criteriaBuilder) -> root.get(KEY)
                 .in(Arrays.stream(params).toArray());
-
-        /*
-        without lambda:
-        return new Specification<Book>() {
-            @Override
-            public Predicate toPredicate(Root<Book> root,
-            CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
-                return root.get("title").in(Arrays.stream(params).toArray());
-            }
-        };
-         */
     }
 }
