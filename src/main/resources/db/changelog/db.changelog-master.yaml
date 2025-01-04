@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/changes/27-01-changelog.xml
+  - include:
+      file: db/changelog/changes/27-02-changelog.xml
+  - include:
+      file: db/changelog/changes/27-03-changelog.yml
+  - include:
+      file: db/changelog/changes/27-04-changelog.yaml

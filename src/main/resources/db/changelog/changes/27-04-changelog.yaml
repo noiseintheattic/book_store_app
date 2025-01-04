@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1735322995978-1
+      author: bart
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - modifyDataType:
+            columnName: price
+            newDataType: DECIMAL
+            tableName: books
+

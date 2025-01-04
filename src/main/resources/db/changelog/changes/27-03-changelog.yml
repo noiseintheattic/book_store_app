@@ -1,0 +1,9 @@
+databaseChangeLog:
+        - changeSet:
+                id: 3
+                author: bart (generated)
+                changes:
+                        - modifyDataType:
+                                tableName: books
+                                columnName: is_deleted
+                                newDataType: bit
