@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface FieldMatch {
     String message() default "Fields password and repeat password"
-            + "should be the same";
+            + " should be the same";
     Class<?>[]groups() default {};
     Class<? extends Payload>[] payload() default {};
 

@@ -22,14 +22,4 @@ public class UserRegistrationRequestDto {
     private String firstName;
     @NotBlank
     private String lastName;
-
-    /*
-
-    @FieldMatch(first = "password", second = "repeatPassword", message = "Password must match.")
-    public boolean isPasswordMatch() {
-        return password != null && password.equals(repeatPassword);
-    }
-
-     */
-
 }

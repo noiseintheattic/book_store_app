@@ -17,11 +17,8 @@ public class FieldMatchValidator implements ConstraintValidator<FieldMatch, Obje
     @Override
     public boolean isValid(Object value, ConstraintValidatorContext context) {
         try {
-            // get the value of fields
             final Object firstObj = getFieldValue(value, firstFieldName);
             final Object secondObj = getFieldValue(value, secondFieldName);
-
-            // check if the values are equal
             return firstObj != null && firstObj.equals(secondObj);
         } catch (Exception e) {
             return false;
