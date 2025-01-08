@@ -9,3 +9,7 @@ databaseChangeLog:
       file: db/changelog/changes/27-04-changelog.yaml
   - include:
       file: db/changelog/changes/27-05-create-users-table.yaml
+  - include:
+      file: db/changelog/changes/27-06-create-roles-table.yaml
+  - include:
+      file: db/changelog/changes/27-07-create-userRoles-table.yaml
