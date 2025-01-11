@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class UserResponseDto {
-    private String message = "You have been successfully registered.";
+    private String message;
     private Long id;
     private String email;
 }

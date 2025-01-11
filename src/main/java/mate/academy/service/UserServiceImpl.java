@@ -30,6 +30,8 @@ public class UserServiceImpl implements UserService {
         user.setFirstName(requestDto.getFirstName());
         user.setLastName(requestDto.getLastName());
         User savedUser = userRepository.save(user);
-        return userMapper.toUserResponseDto(savedUser);
+        UserResponseDto userResponseDto = userMapper.toUserResponseDto(savedUser);
+        userResponseDto.setMessage("You have been successfully registered.");
+        return userResponseDto;
     }
 }
