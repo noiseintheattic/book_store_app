@@ -2,6 +2,7 @@ package mate.academy.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import mate.academy.dto.book.BookDtoWithoutCategoryIds;
@@ -30,21 +31,21 @@ public class CategoryController {
     @PostMapping
     @Operation(summary = "Create new category", description = "Create a new category for books")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public CategoryDto createCategory(@RequestBody CategoryDto categoryDto) {
+    public CategoryDto createCategory(@Valid @RequestBody CategoryDto categoryDto) {
         return categoryService.save(categoryDto);
     }
 
     @GetMapping
     @Operation(summary = "Get all categories",
             description = "Get a list of all available categories")
-    @PreAuthorize("hasRole({'ROLE_USER', 'ROLE_ADMIN'})")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public List<CategoryDto> getAll(Pageable pageable) {
-        return categoryService.findAll();
+        return categoryService.findAll(pageable);
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Get category by Id", description = "Get category by Id")
-    @PreAuthorize("hasRole({'ROLE_USER', 'ROLE_ADMIN'})")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public CategoryDto getCategoryById(@PathVariable Long id) {
         return categoryService.getById(id);
     }

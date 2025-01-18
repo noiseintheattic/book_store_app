@@ -10,6 +10,7 @@ import mate.academy.dto.book.BookDtoWithoutCategoryIds;
 import mate.academy.dto.book.CreateBookRequestDto;
 import mate.academy.model.Book;
 import mate.academy.model.Category;
+import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -50,4 +51,12 @@ public interface BookMapper {
         return categories;
     }
 
+    @AfterMapping
+    default void setCategoryIds(@MappingTarget BookDto bookDto, Book book) {
+        Set<Category> booksCategories = book.getBooksCategories();
+        List<String> bookDtoCategories = new ArrayList<>();
+        for (Category c : booksCategories) {
+            bookDtoCategories.add(c.getName());
+        }
+    }
 }

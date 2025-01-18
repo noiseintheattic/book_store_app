@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
 public interface BookRepository extends JpaRepository<Book, Long>, JpaSpecificationExecutor<Book> {
-    @Query("FROM Book b JOIN b.booksCategories bc WHERE bc.id = :categoryId")
+    @Query("FROM Book b JOIN FETCH b.booksCategories bc WHERE bc.id = :categoryId")
     List<Book> findAllByBooksCategories_Id(Long categoryId);
 }

@@ -2,9 +2,10 @@ package mate.academy.service;
 
 import java.util.List;
 import mate.academy.dto.category.CategoryDto;
+import org.springframework.data.domain.Pageable;
 
 public interface CategoryService {
-    List<CategoryDto> findAll();
+    List<CategoryDto> findAll(Pageable pageable);
 
     CategoryDto getById(Long id);
 

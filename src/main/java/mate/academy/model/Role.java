@@ -28,7 +28,7 @@ public class Role {
     private Set<User> userRoles;
 
     private enum RoleName {
-        ADMIN,
-        USER
+        ROLE_ADMIN,
+        ROLE_USER
     }
 }

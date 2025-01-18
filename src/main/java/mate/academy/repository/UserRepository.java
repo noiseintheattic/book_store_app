@@ -10,6 +10,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificationExecutor<User> {
-    @Query("SELECT u FROM User u JOIN FETCH u.userRoles WHERE u.email =:mail")
+    @Query("SELECT u FROM User u LEFT JOIN FETCH u.userRoles WHERE u.email =:mail")
     Optional<User> findUserByEmail(@NotBlank @Email @Param("mail")String email);
 }

@@ -32,7 +32,7 @@ public class BookController {
 
     @GetMapping
     @Operation(summary = "Get all books", description = "Get a list of all available products")
-    @PreAuthorize("hasRole({'ROLE_USER', 'ROLE_ADMIN'})")
+    @PreAuthorize("hasAnyRole()")
     public List<BookDto> getAll(Pageable pageable) {
         return bookService.findAll(pageable);
     }
