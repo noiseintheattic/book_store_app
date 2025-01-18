@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import mate.academy.dto.book.BookDto;
+import mate.academy.dto.book.BookDtoWithoutCategoryIds;
 import mate.academy.dto.book.BookSearchParametersDto;
 import mate.academy.dto.book.CreateBookRequestDto;
 import mate.academy.service.BookService;
@@ -47,7 +48,7 @@ public class BookController {
     @GetMapping("/{id}")
     @Operation(summary = "Get a book by id", description = "Get a book with given id number")
     @PreAuthorize("hasRole({'ROLE_USER', 'ROLE_ADMIN'})")
-    public BookDto getBookById(@PathVariable Long id) {
+    public BookDtoWithoutCategoryIds getBookById(@PathVariable Long id) {
         return bookService.getById(id);
     }
 

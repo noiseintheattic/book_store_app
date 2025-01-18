@@ -1,18 +1,18 @@
 databaseChangeLog:
   - changeSet:
-      id: create-userRoles-table
+      id: create-booksCategories-table
       author: bart
       changes:
         - createTable:
-            tableName: user_roles
+            tableName: books_categories
             columns:
               - column:
-                  name: user_id
+                  name: book_id
                   type: bigint
                   constraints:
                     nullable: false
               - column:
-                  name: role_id
+                  name: category_id
                   type: bigint
                   constraints:
                     nullable: false
@@ -24,14 +24,14 @@ databaseChangeLog:
                     primaryKey: true
                     nullable: false
         - addForeignKeyConstraint:
-            constraintName: fk_user_roles_user
-            baseTableName: user_roles
-            baseColumnNames: user_id
-            referencedTableName: users
+            constraintName: fk_books_categories_book
+            baseTableName: books_categories
+            baseColumnNames: book_id
+            referencedTableName: books
             referencedColumnNames: id
         - addForeignKeyConstraint:
-            constraintName: fk_user_roles_role
-            baseTableName: user_roles
-            baseColumnNames: role_id
-            referencedTableName: roles
+            constraintName: fk_books_categories_category
+            baseTableName: books_categories
+            baseColumnNames: category_id
+            referencedTableName: categories
             referencedColumnNames: id
