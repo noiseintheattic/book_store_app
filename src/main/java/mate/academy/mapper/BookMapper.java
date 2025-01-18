@@ -32,12 +32,6 @@ public interface BookMapper {
 
     BookDtoWithoutCategoryIds toDtoWithoutCategories(Book book);
 
-    /*
-    @AfterMapping
-    default void setCategoryIds(@MappingTarget BookDto bookDto, Book book) {
-    }
-     */
-
     @Named("categoriesFromModel")
     default List<String> categoriesFromModel(Set<Category> booksCategories) {
         List<String> categories = new ArrayList<>();
