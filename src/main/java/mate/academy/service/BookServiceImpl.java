@@ -3,6 +3,7 @@ package mate.academy.service;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import mate.academy.dto.book.BookDto;
+import mate.academy.dto.book.BookDtoWithoutCategoryIds;
 import mate.academy.dto.book.BookSearchParametersDto;
 import mate.academy.dto.book.CreateBookRequestDto;
 import mate.academy.exceptions.DataProcessingException;
@@ -41,11 +42,11 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public BookDto getById(Long id) {
+    public BookDtoWithoutCategoryIds getById(Long id) {
         Book bookById = bookRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Can't find book with id = " + id));
-        return bookMapper.toDto(bookById);
+        return bookMapper.toDtoWithoutCategories(bookById);
     }
 
     @Override
@@ -70,6 +71,13 @@ public class BookServiceImpl implements BookService {
         return bookRepository.findAll(bookSpecification, pageable)
                 .stream()
                 .map(bookMapper::toDto)
+                .toList();
+    }
+
+    @Override
+    public List<BookDtoWithoutCategoryIds> findAllByBooksCategories_Id(Long categoryId) {
+        return bookRepository.findAllByBooksCategories_Id(categoryId).stream()
+                .map(bookMapper::toDtoWithoutCategories)
                 .toList();
     }
 }
