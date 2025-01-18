@@ -8,9 +8,11 @@ import mate.academy.dto.user.UserLoginRequestDto;
 import mate.academy.dto.user.UserLoginResponseDto;
 import mate.academy.dto.user.UserRegistrationRequestDto;
 import mate.academy.dto.user.UserResponseDto;
+import mate.academy.exceptions.LoginException;
 import mate.academy.exceptions.RegistrationException;
 import mate.academy.security.AuthenticationService;
 import mate.academy.service.UserService;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,7 +35,13 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     @Operation(summary = "Login", description = "Log into Book Store.")
-    public UserLoginResponseDto login(@RequestBody UserLoginRequestDto userLoginRequestDto) {
-        return authenticationService.authenticate(userLoginRequestDto);
+    public UserLoginResponseDto login(
+            @Valid @RequestBody UserLoginRequestDto userLoginRequestDto
+    ) throws LoginException {
+        try {
+            return authenticationService.authenticate(userLoginRequestDto);
+        } catch (AuthenticationException e) {
+            throw new LoginException("Can't login user: " + userLoginRequestDto.email());
+        }
     }
 }
