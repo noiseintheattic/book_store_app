@@ -25,9 +25,9 @@ public class Role {
     @Enumerated(EnumType.STRING)
     private RoleName name;
     @ManyToMany(mappedBy = "userRoles")
-    private Set<User> userRoles;
+    private Set<User> usersWithRoles;
 
-    private enum RoleName {
+    public enum RoleName {
         ROLE_ADMIN,
         ROLE_USER
     }

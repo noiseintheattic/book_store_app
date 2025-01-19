@@ -51,7 +51,7 @@ public class User implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return userRoles.stream()
-                .map(role -> new SimpleGrantedAuthority(role.toString()))
+                .map(role -> new SimpleGrantedAuthority(role.getName().toString()))
                 .collect(Collectors.toSet());
     }
 
@@ -77,6 +77,6 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return !isDeleted;
     }
 }
