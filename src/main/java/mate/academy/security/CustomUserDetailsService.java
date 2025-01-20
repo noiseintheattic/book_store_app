@@ -1,6 +1,5 @@
 package mate.academy.security;
 
-import jakarta.transaction.Transactional;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import mate.academy.model.Role;
@@ -11,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,16 +29,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         System.out.println("User: " + user.getEmail());
         System.out.println("Roles: " + user.getUserRoles());
         System.out.println("========================================");
-
-        Set<Role> roles = roleRepository.findByUsersEmailAndUsersIsDeletedFalse(email);
-        System.out.println("========================================");
-        System.out.println("roles taken from user through roleRepository:");
-        roles.forEach(System.out::println);
-        System.out.println("========================================");
-
-        if (roles.isEmpty()) {
-            throw new UsernameNotFoundException("User has no roles assigned.");
-        }
 
         return user;
     }
