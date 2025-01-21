@@ -2,6 +2,7 @@ package mate.academy.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import mate.academy.dto.book.BookDtoWithoutCategoryIds;
@@ -27,33 +28,41 @@ public class CategoryController {
     private final CategoryService categoryService;
     private final BookService bookService;
 
-    @PostMapping
-    @Operation(summary = "Create new category", description = "Create a new category for books")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public CategoryDto createCategory(@RequestBody CategoryDto categoryDto) {
-        return categoryService.save(categoryDto);
-    }
-
     @GetMapping
     @Operation(summary = "Get all categories",
             description = "Get a list of all available categories")
-    @PreAuthorize("hasRole({'ROLE_USER', 'ROLE_ADMIN'})")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     public List<CategoryDto> getAll(Pageable pageable) {
-        return categoryService.findAll();
+        return categoryService.findAll(pageable);
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Get category by Id", description = "Get category by Id")
-    @PreAuthorize("hasRole({'ROLE_USER', 'ROLE_ADMIN'})")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     public CategoryDto getCategoryById(@PathVariable Long id) {
         return categoryService.getById(id);
+    }
+
+    @GetMapping("/{id}/books")
+    @Operation(summary = "Get books by category id",
+            description = "Get the list of all books chosen category.")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+    public List<BookDtoWithoutCategoryIds> getBooksByCategoryId(@PathVariable Long id) {
+        return bookService.findAllByBooksCategories_Id(id);
+    }
+
+    @PostMapping
+    @Operation(summary = "Create new category", description = "Create a new category for books")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public CategoryDto createCategory(@Valid @RequestBody CategoryDto categoryDto) {
+        return categoryService.save(categoryDto);
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Update category by id.", description = "Update category by id.")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public CategoryDto updateCategory(@PathVariable Long id,
-                                      @RequestBody CategoryDto categoryDto) {
+                                      @Valid @RequestBody CategoryDto categoryDto) {
         return categoryService.update(id, categoryDto);
     }
 
@@ -62,13 +71,5 @@ public class CategoryController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public void deleteCategory(@PathVariable Long id) {
         categoryService.deleteById(id);
-    }
-
-    @GetMapping("/{id}/books")
-    @Operation(summary = "Get books by category id",
-            description = "Get the list of all books chosen category.")
-    @PreAuthorize("hasRole({'ROLE_USER', 'ROLE_ADMIN'})")
-    public List<BookDtoWithoutCategoryIds> getBooksByCategoryId(@PathVariable Long id) {
-        return bookService.findAllByBooksCategories_Id(id);
     }
 }

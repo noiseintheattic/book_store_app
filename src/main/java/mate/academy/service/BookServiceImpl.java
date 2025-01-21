@@ -15,6 +15,7 @@ import mate.academy.repository.BookSpecificationBuilder;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -35,9 +36,11 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    @Transactional
     public List<BookDto> findAll(Pageable pageable) {
-        return bookRepository.findAll(pageable).stream()
-                .map(b -> bookMapper.toDto(b))
+        return bookRepository.findAll(pageable)
+                .stream()
+                .map(bookMapper::toDto)
                 .toList();
     }
 
@@ -76,7 +79,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public List<BookDtoWithoutCategoryIds> findAllByBooksCategories_Id(Long categoryId) {
-        return bookRepository.findAllByBooksCategories_Id(categoryId).stream()
+        return bookRepository.findAllByCategoryId(categoryId).stream()
                 .map(bookMapper::toDtoWithoutCategories)
                 .toList();
     }

@@ -24,6 +24,11 @@ public class JwtUtil {
     }
 
     public String generateToken(String username) {
+        Date currentTime = new Date(System.currentTimeMillis());
+        Date expirationDate = new Date(System.currentTimeMillis() + expiration);
+        System.out.println("Current time is: " + currentTime);
+        System.out.println("Expiration time for token: " + expirationDate);
+
         return Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(new Date(System.currentTimeMillis()))

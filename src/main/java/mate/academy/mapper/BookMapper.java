@@ -10,6 +10,7 @@ import mate.academy.dto.book.BookDtoWithoutCategoryIds;
 import mate.academy.dto.book.CreateBookRequestDto;
 import mate.academy.model.Book;
 import mate.academy.model.Category;
+import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -17,7 +18,6 @@ import org.mapstruct.Named;
 
 @Mapper(config = MapperConfig.class, uses = CategoryMapper.class)
 public interface BookMapper {
-
     @Mapping(source = "booksCategories",
             target = "categories",
             qualifiedByName = "categoriesFromModel")
@@ -45,9 +45,19 @@ public interface BookMapper {
     default Set<Category> categoriesFromRequest(List<String> categoriesFromDto) {
         Set<Category> categories = new HashSet<>();
         for (String s : categoriesFromDto) {
-            categories.add(new Category(s));
+            Category category = new Category();
+            category.setName(s);
+            categories.add(category);
         }
         return categories;
     }
 
+    @AfterMapping
+    default void setCategoryIds(@MappingTarget BookDto bookDto, Book book) {
+        Set<Category> booksCategories = book.getBooksCategories();
+        List<String> bookDtoCategories = new ArrayList<>();
+        for (Category c : booksCategories) {
+            bookDtoCategories.add(c.getName());
+        }
+    }
 }
