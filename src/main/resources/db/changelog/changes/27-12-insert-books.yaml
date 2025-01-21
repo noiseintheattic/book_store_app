@@ -1,0 +1,53 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-books
+      author: bart (generated)
+      changes:
+        - insert:
+            tableName: books
+            columns:
+              - column: {name: title, value: "Catch 22"}
+              - column: {name: author, value: "Joseph Heller"}
+              - column: {name: price, valueNumeric: 15}
+              - column: {name: description, value: "One of the most popular novel of XX century."}
+              - column: {name: is_deleted, valueNumeric: 0}
+        - insert:
+            tableName: books
+            columns:
+              - column: { name: title, value: "The Trial" }
+              - column: { name: author, value: "Franz Kafka" }
+              - column: { name: price, valueNumeric: 25 }
+              - column: { name: description, value: "Classic novel." }
+              - column: {name: is_deleted, valueNumeric: 0}
+        - insert:
+            tableName: books
+            columns:
+              - column: { name: title, value: "Harry Potter" }
+              - column: { name: author, value: "J.K. Rowling" }
+              - column: { name: price, valueNumeric: 99 }
+              - column: { name: description, value: "Magic book for everybody." }
+              - column: {name: is_deleted, valueNumeric: 0}
+        - insert:
+            tableName: books
+            columns:
+              - column: { name: title, value: "Castle" }
+              - column: { name: author, value: "Franz Kafka" }
+              - column: { name: price, valueNumeric: 77 }
+              - column: { name: description, value: "Misterious novel." }
+              - column: {name: is_deleted, valueNumeric: 0}
+        - insert:
+            tableName: books
+            columns:
+              - column: { name: title, value: "Watchers" }
+              - column: { name: author, value: "Dean Koontz" }
+              - column: { name: price, valueNumeric: 148 }
+              - column: { name: description, value: "Scarry book." }
+              - column: {name: is_deleted, valueNumeric: 0}
+        - insert:
+            tableName: books
+            columns:
+              - column: { name: title, value: "The Shining" }
+              - column: { name: author, value: "Stephen King" }
+              - column: { name: price, valueNumeric: 864 }
+              - column: { name: description, value: "Classic horror novel." }
+              - column: {name: is_deleted, valueNumeric: 0}
