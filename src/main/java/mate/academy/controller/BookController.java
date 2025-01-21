@@ -32,9 +32,22 @@ public class BookController {
 
     @GetMapping
     @Operation(summary = "Get all books", description = "Get a list of all available products")
-    @PreAuthorize("hasAnyRole()")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     public List<BookDto> getAll(Pageable pageable) {
         return bookService.findAll(pageable);
+    }
+
+    @GetMapping("/{id}")
+    @Operation(summary = "Get a book by id", description = "Get a book with given id number")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+    public BookDtoWithoutCategoryIds getBookById(@PathVariable Long id) {
+        return bookService.getById(id);
+    }
+
+    @GetMapping("/search")
+    @Operation(summary = "Search books", description = "Search books by parameters")
+    public List<BookDto> searchBooks(Pageable pageable, BookSearchParametersDto searchParameters) {
+        return bookService.search(pageable, searchParameters);
     }
 
     @PostMapping
@@ -43,13 +56,6 @@ public class BookController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public BookDto createBook(@RequestBody @Valid CreateBookRequestDto createBookRequestDto) {
         return bookService.add(createBookRequestDto);
-    }
-
-    @GetMapping("/{id}")
-    @Operation(summary = "Get a book by id", description = "Get a book with given id number")
-    @PreAuthorize("hasRole({'ROLE_USER', 'ROLE_ADMIN'})")
-    public BookDtoWithoutCategoryIds getBookById(@PathVariable Long id) {
-        return bookService.getById(id);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -66,11 +72,5 @@ public class BookController {
     public BookDto update(@PathVariable Long id,
                           @RequestBody @Valid CreateBookRequestDto createBookRequestDto) {
         return bookService.update(id, createBookRequestDto);
-    }
-
-    @GetMapping("/search")
-    @Operation(summary = "Search books", description = "Search books by parameters")
-    public List<BookDto> searchBooks(Pageable pageable, BookSearchParametersDto searchParameters) {
-        return bookService.search(pageable, searchParameters);
     }
 }

@@ -3,6 +3,7 @@ package mate.academy.service;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import mate.academy.dto.category.CategoryDto;
+import mate.academy.exceptions.DataProcessingException;
 import mate.academy.exceptions.EntityNotFoundException;
 import mate.academy.mapper.CategoryMapper;
 import mate.academy.model.Category;
@@ -20,21 +21,26 @@ public class CategoryServiceImpl implements CategoryService {
     public List<CategoryDto> findAll(Pageable pageable) {
         return categoryRepository.findAll(pageable)
                 .stream()
-                .map(c -> categoryMapper.toDto(c))
+                .map(categoryMapper::toDto)
                 .toList();
     }
 
     @Override
     public CategoryDto getById(Long id) {
         Category categoryById = categoryRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("Can't find category."));
+                () -> new EntityNotFoundException("Can't find category with given id: " + id));
         return categoryMapper.toDto(categoryById);
     }
 
     @Override
     public CategoryDto save(CategoryDto categoryDto) {
         Category category = categoryMapper.toModel(categoryDto);
-        categoryRepository.save(category);
+        try {
+            categoryRepository.save(category);
+        } catch (RuntimeException e) {
+            throw new DataProcessingException("Can't create category id: " + categoryDto.getId()
+                    + " with name: " + categoryDto.getName(), e);
+        }
         return categoryDto;
     }
 
@@ -49,6 +55,10 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public void deleteById(Long id) {
-        categoryRepository.deleteById(id);
+        try {
+            categoryRepository.deleteById(id);
+        } catch (EntityNotFoundException e) {
+            throw new EntityNotFoundException("Can't find category with given id: " + id, e);
+        }
     }
 }

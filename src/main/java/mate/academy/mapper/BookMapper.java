@@ -18,7 +18,6 @@ import org.mapstruct.Named;
 
 @Mapper(config = MapperConfig.class, uses = CategoryMapper.class)
 public interface BookMapper {
-
     @Mapping(source = "booksCategories",
             target = "categories",
             qualifiedByName = "categoriesFromModel")
@@ -46,7 +45,9 @@ public interface BookMapper {
     default Set<Category> categoriesFromRequest(List<String> categoriesFromDto) {
         Set<Category> categories = new HashSet<>();
         for (String s : categoriesFromDto) {
-            categories.add(new Category(s));
+            Category category = new Category();
+            category.setName(s);
+            categories.add(category);
         }
         return categories;
     }
