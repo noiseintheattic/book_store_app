@@ -8,8 +8,10 @@ import mate.academy.dto.user.UserResponseDto;
 import mate.academy.exceptions.EntityNotFoundException;
 import mate.academy.exceptions.RegistrationException;
 import mate.academy.mapper.UserMapper;
+import mate.academy.model.ShoppingCart;
 import mate.academy.model.User;
 import mate.academy.repository.RoleRepository;
+import mate.academy.repository.ShoppingCartRepository;
 import mate.academy.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,7 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
+    private final ShoppingCartRepository shoppingCartRepository;
 
     @Transactional
     @Override
@@ -41,6 +44,9 @@ public class UserServiceImpl implements UserService {
         User savedUser = userRepository.save(user);
         UserResponseDto userResponseDto = userMapper.toUserResponseDto(savedUser);
         userResponseDto.setMessage("You have been successfully registered.");
+        ShoppingCart shoppingCart = new ShoppingCart();
+        shoppingCart.setUser(savedUser);
+        shoppingCartRepository.save(shoppingCart);
         return userResponseDto;
     }
 }
