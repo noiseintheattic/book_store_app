@@ -3,9 +3,9 @@ package mate.academy.service;
 import mate.academy.dto.cart.CartItemDto;
 
 public interface CartItemService {
-    CartItemDto add(String email, Long bookId, int quantity);
+    CartItemDto add(Long bookId, Integer quantity);
 
-    CartItemDto update(String email, Long cartItemId, int quantity);
+    CartItemDto update(Long cartItemId, Integer quantity);
 
-    void delete(String email, Long cartItemId);
+    void delete(Long cartItemId);
 }

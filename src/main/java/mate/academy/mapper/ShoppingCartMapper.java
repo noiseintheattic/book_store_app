@@ -5,6 +5,7 @@ import java.util.Set;
 import mate.academy.config.MapperConfig;
 import mate.academy.dto.cart.CartItemDto;
 import mate.academy.dto.cart.ShoppingCartDto;
+import mate.academy.exceptions.DataProcessingException;
 import mate.academy.model.CartItem;
 import mate.academy.model.ShoppingCart;
 import mate.academy.model.User;
@@ -27,15 +28,22 @@ public interface ShoppingCartMapper {
 
     @Named("cartItemsToDto")
     default Set<CartItemDto> cartItemsToDto(Set<CartItem> items) {
-        Set<CartItemDto> cartItemsDto = new HashSet<>();
-        for (CartItem c : items) {
-            CartItemDto cartItemDto = new CartItemDto();
-            cartItemDto.setId(c.getId());
-            cartItemDto.setQuantity(c.getQuantity());
-            cartItemDto.setBookId(c.getBook().getId());
-            cartItemDto.setBookTitle(c.getBook().getTitle());
-            cartItemsDto.add(cartItemDto);
+        if (items != null) {
+            Set<CartItemDto> cartItemsDto = new HashSet<>();
+            for (CartItem c : items) {
+                CartItemDto cartItemDto = new CartItemDto();
+                if (c.getBook() != null) {
+                    cartItemDto.setId(c.getId());
+                    cartItemDto.setQuantity(c.getQuantity());
+                    cartItemDto.setBookId(c.getBook().getId());
+                    cartItemDto.setBookTitle(c.getBook().getTitle());
+                    cartItemsDto.add(cartItemDto);
+                }
+            }
+            return cartItemsDto;
+        } else {
+            throw new DataProcessingException("Can't change cartItems into dto,"
+                    + "because object 'cart items' is null.");
         }
-        return cartItemsDto;
     }
 }

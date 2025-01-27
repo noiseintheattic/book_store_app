@@ -1,5 +1,6 @@
 package mate.academy.service;
 
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import mate.academy.dto.cart.ShoppingCartDto;
 import mate.academy.exceptions.EntityNotFoundException;
@@ -23,11 +24,11 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     private final ShoppingCartMapper shoppingCartMapper;
 
     @Override
-    public ShoppingCartDto findByEmail(String email) {
+    public Optional<ShoppingCartDto> findByEmail(String email) {
         ShoppingCart shoppingCart = shoppingCartRepository.findByUserEmail(email).orElseThrow(
                 () -> new EntityNotFoundException("Can't find user by email: " + email)
         );
-        return shoppingCartMapper.toDto(shoppingCart);
+        return Optional.ofNullable(shoppingCartMapper.toDto(shoppingCart));
     }
 
     @Override
@@ -58,7 +59,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     }
 
     @Override
-    public ShoppingCartDto update(String email) {
+    public ShoppingCartDto updateItemsSet(String email) {
         ShoppingCart shoppingCart = shoppingCartRepository
                 .findByUserEmail(email)
                 .orElseThrow();

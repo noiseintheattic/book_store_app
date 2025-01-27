@@ -12,6 +12,7 @@ import mate.academy.repository.BookRepository;
 import mate.academy.repository.CartItemRepository;
 import mate.academy.repository.ShoppingCartRepository;
 import mate.academy.repository.UserRepository;
+import mate.academy.security.AuthenticationService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,10 +24,12 @@ public class CartItemServiceImpl implements CartItemService {
     private final CartItemMapper cartItemMapper;
     private final BookRepository bookRepository;
     private final UserRepository userRepository;
+    private final AuthenticationService authenticationService;
 
     @Override
     @Transactional
-    public CartItemDto add(String email, Long bookId, int quantity) {
+    public CartItemDto add(Long bookId, Integer quantity) {
+        String email = authenticationService.getAuthenticatedUserEmail();
         Book book = bookRepository.findById(bookId).orElseThrow(
                 () -> new EntityNotFoundException("Cant find book by id: " + bookId));
 
@@ -67,7 +70,8 @@ public class CartItemServiceImpl implements CartItemService {
     }
 
     @Override
-    public CartItemDto update(String email, Long cartItemId, int quantity) {
+    public CartItemDto update(Long cartItemId, Integer quantity) {
+        String email = authenticationService.getAuthenticatedUserEmail();
         ShoppingCart shoppingCart = shoppingCartRepository
                 .findByUserEmail(email)
                 .orElseThrow(
@@ -92,7 +96,8 @@ public class CartItemServiceImpl implements CartItemService {
     }
 
     @Override
-    public void delete(String email, Long cartItemId) {
+    public void delete(Long cartItemId) {
+        String email = authenticationService.getAuthenticatedUserEmail();
         ShoppingCart shoppingCart = shoppingCartRepository
                 .findByUserEmail(email)
                 .orElseThrow(

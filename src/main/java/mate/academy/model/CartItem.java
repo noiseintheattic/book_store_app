@@ -5,7 +5,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -21,8 +21,9 @@ public class CartItem {
     @ManyToOne
     private ShoppingCart shoppingCart;
     @NotNull
-    @OneToOne
+    @ManyToOne
     private Book book;
     @NotNull
-    private int quantity;
+    @Min(0)
+    private Integer quantity;
 }

@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import mate.academy.dto.cart.CartItemDto;
 import mate.academy.dto.cart.CartItemRequestDto;
 import mate.academy.dto.cart.ShoppingCartDto;
+import mate.academy.exceptions.EntityNotFoundException;
 import mate.academy.service.CartItemService;
 import mate.academy.service.ShoppingCartService;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -33,16 +34,18 @@ public class ShoppingCartController {
     @Operation(summary = "Get all cart items",
             description = "Get a list of items from the shopping cart")
     public ShoppingCartDto getCart(Authentication authentication) {
-        return shoppingCartService.findByEmail(authentication.getName());
+        return shoppingCartService.findByEmail(authentication.getName()).orElseThrow(
+                () -> new EntityNotFoundException("Can't find cart for user: "
+                + authentication.getName())
+        );
     }
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @Operation(summary = "Add new item",
             description = "Add new item to shopping cart")
-    public CartItemDto add(Authentication authentication,
-                           @Valid @RequestBody CartItemRequestDto cartItemRequestDto) {
-        return cartItemService.add(authentication.getName(),
+    public CartItemDto add(@Valid @RequestBody CartItemRequestDto cartItemRequestDto) {
+        return cartItemService.add(
                 cartItemRequestDto.bookId(),
                 cartItemRequestDto.quantity());
     }
@@ -51,16 +54,15 @@ public class ShoppingCartController {
     @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @Operation(summary = "Update quantity",
             description = "Update quantity of the item from shopping cart")
-    public CartItemDto update(Authentication authentication,
-                              @PathVariable Long cartItemId,
-                              @RequestBody int quantity) {
-        return cartItemService.update(authentication.getName(), cartItemId, quantity);
+    public CartItemDto update(@PathVariable Long cartItemId,
+                              @RequestBody @Valid Integer quantity) {
+        return cartItemService.update(cartItemId, quantity);
     }
 
     @DeleteMapping("/cart-items/{cartItemId}")
     @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @Operation(summary = "Delete item", description = "Delete item from shopping cart")
-    public void deleteItem(Authentication authentication, @PathVariable Long cartItemId) {
-        cartItemService.delete(authentication.getName(), cartItemId);
+    public void deleteItem(@PathVariable Long cartItemId) {
+        cartItemService.delete(cartItemId);
     }
 }
