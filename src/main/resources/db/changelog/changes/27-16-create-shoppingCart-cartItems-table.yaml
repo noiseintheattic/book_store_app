@@ -1,0 +1,25 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-cartItem-table
+      author: bart
+      changes:
+        - createTable:
+            tableName: shopping_cart_cart_items
+            columns:
+                - column:
+                    name: id
+                    type: bigint
+                    autoIncrement: true
+                    constraints:
+                      primaryKey: true
+                      nullable: false
+                - column:
+                    name: shopping_cart_id
+                    type: bigint
+                    constraints:
+                      nullable: false
+                - column:
+                    name: cart_items_id
+                    type: bigint
+                    constraints:
+                      nullable: false

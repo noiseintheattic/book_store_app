@@ -25,3 +25,9 @@ databaseChangeLog:
       file: db/changelog/changes/27-12-insert-books.yaml
   - include:
       file: db/changelog/changes/27-13-insert-books-categories.yaml
+  - include:
+      file: db/changelog/changes/27-14-create-cartItem-table.yaml
+  - include:
+      file: db/changelog/changes/27-15-create-shoppingCart-table.yaml
+  - include:
+      file: db/changelog/changes/27-16-create-shoppingCart-cartItems-table.yaml

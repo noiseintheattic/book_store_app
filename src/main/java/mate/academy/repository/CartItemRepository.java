@@ -1,9 +1,9 @@
 package mate.academy.repository;
 
-import mate.academy.model.Role;
+import mate.academy.model.CartItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface RoleRepository extends JpaRepository<Role, Long> {
+public interface CartItemRepository extends JpaRepository<CartItem, Long> {
 }
