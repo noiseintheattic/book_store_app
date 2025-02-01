@@ -21,6 +21,7 @@ import mate.academy.repository.ShoppingCartRepository;
 import mate.academy.repository.UserRepository;
 import mate.academy.security.AuthenticationService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -45,6 +46,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public OrderDto placeOrder(Long shoppingCartId, String shippingAddress) {
         String email = authenticationService.getAuthenticatedUserEmail();
         User user = userRepository.findUserByEmail(email).orElseThrow();
