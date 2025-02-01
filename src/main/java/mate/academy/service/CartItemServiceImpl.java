@@ -8,7 +8,7 @@ import mate.academy.mapper.CartItemMapper;
 import mate.academy.model.Book;
 import mate.academy.model.CartItem;
 import mate.academy.model.ShoppingCart;
-import mate.academy.repository.BookRepository;
+import mate.academy.repository.book.BookRepository;
 import mate.academy.repository.CartItemRepository;
 import mate.academy.repository.ShoppingCartRepository;
 import mate.academy.repository.UserRepository;

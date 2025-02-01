@@ -1,0 +1,25 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-order-orderItems-table
+      author: bart
+      changes:
+        - createTable:
+            tableName: order_order_items
+            columns:
+                - column:
+                    name: id
+                    type: bigint
+                    autoIncrement: true
+                    constraints:
+                      primaryKey: true
+                      nullable: false
+                - column:
+                    name: order_id
+                    type: bigint
+                    constraints:
+                      nullable: false
+                - column:
+                    name: order_items_id
+                    type: bigint
+                    constraints:
+                      nullable: false

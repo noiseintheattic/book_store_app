@@ -1,4 +1,4 @@
-package mate.academy.repository;
+package mate.academy.repository.book;
 
 import java.util.List;
 import mate.academy.model.Book;
