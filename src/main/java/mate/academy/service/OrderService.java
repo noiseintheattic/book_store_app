@@ -3,7 +3,6 @@ package mate.academy.service;
 import java.util.Set;
 import mate.academy.dto.order.OrderDto;
 import mate.academy.dto.order.OrderItemDto;
-import mate.academy.model.Order;;
 
 public interface OrderService {
     Set<OrderDto> getAllOrders();

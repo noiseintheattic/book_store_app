@@ -1,9 +1,8 @@
 package mate.academy.dto.order;
 
-import lombok.Data;
-
 import java.math.BigDecimal;
 import java.util.Set;
+import lombok.Data;
 
 @Data
 public class OrderDto {
