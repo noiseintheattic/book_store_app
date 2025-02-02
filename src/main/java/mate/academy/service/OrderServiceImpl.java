@@ -33,8 +33,10 @@ public class OrderServiceImpl implements OrderService {
     private final UserRepository userRepository;
     private final OrderItemRepository orderItemRepository;
     private final OrderItemMapper orderItemMapper;
+    private final ShoppingCartService shoppingCartService;
 
     @Override
+    @Transactional
     public Set<OrderDto> getAllOrders() {
         String email = authenticationService.getAuthenticatedUserEmail();
         Set<Order> orders = orderRepository.findByUserEmail(email);
@@ -50,49 +52,58 @@ public class OrderServiceImpl implements OrderService {
     public OrderDto placeOrder(Long shoppingCartId, String shippingAddress) {
         String email = authenticationService.getAuthenticatedUserEmail();
         User user = userRepository.findUserByEmail(email).orElseThrow();
-        ShoppingCart shoppingCart = shoppingCartRepository.findByUserEmail(email).orElseThrow();
+        ShoppingCart shoppingCart = shoppingCartRepository
+                .findByUserEmail(email)
+                .orElseThrow();
         Order order = new Order();
         order.setOrderDate(LocalDateTime.now());
         order.setUser(user);
         order.setStatus(Order.Status.NEW);
         order.setShippingAddress(shippingAddress);
+        BigDecimal total = BigDecimal.ZERO;
+        order.setTotal(total);
+        Order savedOrder = orderRepository.save(order);
+
         Set<OrderItem> orderItems = new HashSet<>();
         Set<CartItem> cartItems = shoppingCart.getCartItems();
-        BigDecimal total = BigDecimal.ZERO;
 
         for (CartItem c : cartItems) {
             OrderItem orderItem = new OrderItem();
             orderItem.setQuantity(c.getQuantity());
             orderItem.setOrder(order);
             orderItem.setBook(c.getBook());
+
             BigDecimal price = c.getBook().getPrice();
             Integer quantity = c.getQuantity();
             BigDecimal amount = price.multiply(BigDecimal.valueOf(quantity));
             total = total.add(amount);
+
             orderItems.add(orderItem);
             orderItemRepository.save(orderItem);
         }
-
-        order.setOrderItems(orderItems);
-        Order savedOrder = orderRepository.save(order);
+        savedOrder.setOrderItems(orderItems);
+        savedOrder.setTotal(total);
+        orderRepository.save(savedOrder);
+        shoppingCartService.clearItems(shoppingCartId);
         return orderMapper.toDto(savedOrder);
     }
 
     @Override
     public String updateOrderStatus(Long orderId, String status) {
-        Order.Status statusFromString = null;
         try {
-            statusFromString = Order.Status.valueOf(status);
+            Order.Status statusFromString = Order.Status.valueOf(status.toUpperCase());
+            Order order = orderRepository.findById(orderId).orElseThrow(
+                    () -> new EntityNotFoundException("Order with id: "
+                            + orderId + " not found")
+            );
+            order.setStatus(statusFromString);
+            orderRepository.save(order);
+            return status;
         } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Can't find proper name of status for given string: "
+            throw new IllegalArgumentException("Can't find proper name "
+                    + "of status for given string: "
                     + status, e);
         }
-        Order order = orderRepository.findById(orderId).orElseThrow();
-        if (statusFromString != null) {
-            order.setStatus(statusFromString);
-        }
-        orderRepository.save(order);
-        return status.toString();
     }
 
     @Override
@@ -118,6 +129,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public OrderItemDto getItem(Long orderId, Long itemId) {
         String email = authenticationService.getAuthenticatedUserEmail();
         Set<Order> userOrders = orderRepository.findByUserEmail(email);

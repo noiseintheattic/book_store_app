@@ -4,7 +4,7 @@ databaseChangeLog:
       author: bart
       changes:
         - createTable:
-            tableName: order_order_items
+            tableName: orders_order_items
             columns:
                 - column:
                     name: id
@@ -14,7 +14,7 @@ databaseChangeLog:
                       primaryKey: true
                       nullable: false
                 - column:
-                    name: order_id
+                    name: orders_id
                     type: bigint
                     constraints:
                       nullable: false
