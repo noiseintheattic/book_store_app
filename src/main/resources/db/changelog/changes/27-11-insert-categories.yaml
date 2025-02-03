@@ -1,0 +1,30 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-categories
+      author: bart (generated)
+      changes:
+        - insert:
+            tableName: categories
+            columns:
+              - column: {name: name, value: "Horror"}
+              - column: {name: description, value: "Scary books."}
+        - insert:
+            tableName: categories
+            columns:
+              - column: { name: name, value: "Thriller" }
+              - column: { name: description, value: "Little less scary books." }
+        - insert:
+            tableName: categories
+            columns:
+              - column: { name: name, value: "For kids" }
+              - column: { name: description, value: "Books for children." }
+        - insert:
+            tableName: categories
+            columns:
+              - column: { name: name, value: "Classic" }
+              - column: { name: description, value: "Classic novels." }
+        - insert:
+            tableName: categories
+            columns:
+              - column: { name: name, value: "War" }
+              - column: { name: description, value: "Novels of war times." }
