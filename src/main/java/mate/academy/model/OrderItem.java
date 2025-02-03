@@ -4,8 +4,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,21 +13,19 @@ import lombok.ToString;
 
 @Entity
 @Data
-@EqualsAndHashCode(exclude = {"shoppingCart"})
-@ToString
-public class CartItem {
+public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotNull
     @ManyToOne
-    @ToString.Exclude
-    private ShoppingCart shoppingCart;
+    @JoinColumn(name = "orders_id", nullable = false)
     @NotNull
-    @ManyToOne
     @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Order order;
+    @ManyToOne
+    @JoinColumn(name = "book_id")
     private Book book;
     @NotNull
-    @Min(0)
     private Integer quantity;
 }

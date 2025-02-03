@@ -10,4 +10,6 @@ public interface ShoppingCartService {
     ShoppingCartDto add(String email, Book book);
 
     ShoppingCartDto updateItemsSet(String email);
+
+    void clearItems(String email);
 }
