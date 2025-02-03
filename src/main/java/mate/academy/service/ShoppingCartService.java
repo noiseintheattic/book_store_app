@@ -11,5 +11,5 @@ public interface ShoppingCartService {
 
     ShoppingCartDto updateItemsSet(String email);
 
-    void clearItems(Long shoppingCartId);
+    void clearItems(String email);
 }

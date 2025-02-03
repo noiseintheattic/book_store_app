@@ -9,19 +9,23 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Entity
 @Data
 @EqualsAndHashCode(exclude = {"shoppingCart"})
+@ToString
 public class CartItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotNull
     @ManyToOne
+    @ToString.Exclude
     private ShoppingCart shoppingCart;
     @NotNull
     @ManyToOne
+    @ToString.Exclude
     private Book book;
     @NotNull
     @Min(0)

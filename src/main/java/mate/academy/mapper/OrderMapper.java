@@ -5,7 +5,6 @@ import java.util.Set;
 import mate.academy.config.MapperConfig;
 import mate.academy.dto.order.OrderDto;
 import mate.academy.dto.order.OrderItemDto;
-import mate.academy.exceptions.DataProcessingException;
 import mate.academy.model.Order;
 import mate.academy.model.OrderItem;
 import org.mapstruct.Mapper;
@@ -17,8 +16,9 @@ public interface OrderMapper {
 
     @Mapping(source = "id", target = "id")
     @Mapping(source = "user", target = "userId", qualifiedByName = "userToId")
-    @Mapping(source = "status", target = "status", qualifiedByName = "statusToString")
+    @Mapping(source = "status", target = "status")
     @Mapping(source = "total", target = "total")
+    @Mapping(source = "orderDate", target = "orderDate")
     @Mapping(source = "orderItems", target = "orderItems", qualifiedByName = "orderItemsToDto")
     OrderDto toDto(Order order);
 
@@ -28,20 +28,24 @@ public interface OrderMapper {
             Set<OrderItemDto> orderItemsDto = new HashSet<>();
             for (OrderItem o : items) {
                 OrderItemDto orderItemDto = new OrderItemDto();
-                orderItemDto.setId(o.getId());
-                orderItemDto.setQuantity(o.getQuantity());
-                orderItemDto.setBookId(o.getBook().getId());
-                orderItemsDto.add(orderItemDto);
+                if (o.getBook() != null) {
+                    orderItemDto.setId(o.getId());
+                    orderItemDto.setQuantity(o.getQuantity());
+                    orderItemDto.setBookId(o.getBook().getId());
+                    orderItemsDto.add(orderItemDto);
+                }
             }
             return orderItemsDto;
         } else {
-            throw new DataProcessingException("Can't change orderItem into dto,"
-                    + "because object 'order items' is null.");
+            return Set.of();
         }
     }
 
     @Named("statusToString")
     default String statusToString(Order.Status status) {
+        if (status == null) {
+            return "";
+        }
         return status.toString();
     }
 

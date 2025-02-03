@@ -48,8 +48,8 @@ public class OrderController {
     @Operation(summary = "Update status",
             description = "Update status of chosen order")
     public String updateOrderStatus(@PathVariable Long orderId,
-                                    @RequestBody UpdateOrderStatusRequestDto status) {
-        return orderService.updateOrderStatus(orderId, status.getStatus());
+                                    @RequestBody UpdateOrderStatusRequestDto statusRequestDto) {
+        return orderService.updateOrderStatus(orderId, statusRequestDto.getStatus());
     }
 
     @GetMapping("/{orderId}/items")

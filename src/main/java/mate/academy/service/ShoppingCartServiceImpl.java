@@ -11,6 +11,7 @@ import mate.academy.model.ShoppingCart;
 import mate.academy.repository.CartItemRepository;
 import mate.academy.repository.ShoppingCartRepository;
 import mate.academy.repository.UserRepository;
+import mate.academy.security.AuthenticationService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +23,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     private final CartItemRepository repository;
     private final CartItemRepository cartItemRepository;
     private final ShoppingCartMapper shoppingCartMapper;
+    private final AuthenticationService authenticationService;
 
     @Override
     public Optional<ShoppingCartDto> findByEmail(String email) {
@@ -68,10 +70,12 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     }
 
     @Override
-    public void clearItems(Long shoppingCartId) {
-        ShoppingCart shoppingCart = shoppingCartRepository.findById(shoppingCartId).orElseThrow(
-                () -> new EntityNotFoundException("Can't find Shopping Cart with id: "
-                        + shoppingCartId));
-        shoppingCart.getCartItems().clear();
+    public void clearItems(String email) {
+        ShoppingCart shoppingCartByEmail
+                = shoppingCartRepository.findByUserEmail(email).orElseThrow(
+                        () -> new EntityNotFoundException(
+                                "Can't find Shopping Cart by email: "
+                        + email));
+        shoppingCartByEmail.getCartItems().clear();
     }
 }

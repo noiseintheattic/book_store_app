@@ -10,18 +10,22 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 
 @Data
 @Entity
 @Table(name = "roles")
+@ToString
 public class Role implements GrantedAuthority {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @ToString.Include
     private Long id;
     @NotNull
     @Column(unique = true)
     @Enumerated(EnumType.STRING)
+    @ToString.Include
     private RoleName name;
 
     @Override

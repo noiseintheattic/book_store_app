@@ -15,6 +15,7 @@ import mate.academy.model.Order;
 import mate.academy.model.OrderItem;
 import mate.academy.model.ShoppingCart;
 import mate.academy.model.User;
+import mate.academy.repository.CartItemRepository;
 import mate.academy.repository.OrderItemRepository;
 import mate.academy.repository.OrderRepository;
 import mate.academy.repository.ShoppingCartRepository;
@@ -34,6 +35,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderItemRepository orderItemRepository;
     private final OrderItemMapper orderItemMapper;
     private final ShoppingCartService shoppingCartService;
+    private final CartItemRepository cartItemRepository;
 
     @Override
     @Transactional
@@ -55,6 +57,7 @@ public class OrderServiceImpl implements OrderService {
         ShoppingCart shoppingCart = shoppingCartRepository
                 .findByUserEmail(email)
                 .orElseThrow();
+
         Order order = new Order();
         order.setOrderDate(LocalDateTime.now());
         order.setUser(user);
@@ -80,25 +83,28 @@ public class OrderServiceImpl implements OrderService {
 
             orderItems.add(orderItem);
             orderItemRepository.save(orderItem);
+            cartItemRepository.delete(c);
         }
+
         savedOrder.setOrderItems(orderItems);
         savedOrder.setTotal(total);
         orderRepository.save(savedOrder);
-        shoppingCartService.clearItems(shoppingCartId);
+
+        shoppingCart.getCartItems().clear();
+        shoppingCartRepository.save(shoppingCart);
         return orderMapper.toDto(savedOrder);
     }
 
     @Override
-    public String updateOrderStatus(Long orderId, String status) {
+    public String updateOrderStatus(Long orderId, Order.Status status) {
         try {
-            Order.Status statusFromString = Order.Status.valueOf(status.toUpperCase());
             Order order = orderRepository.findById(orderId).orElseThrow(
                     () -> new EntityNotFoundException("Order with id: "
                             + orderId + " not found")
             );
-            order.setStatus(statusFromString);
+            order.setStatus(status);
             orderRepository.save(order);
-            return status;
+            return status.toString();
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Can't find proper name "
                     + "of status for given string: "

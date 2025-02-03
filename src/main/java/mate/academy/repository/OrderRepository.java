@@ -10,5 +10,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query("SELECT o FROM Order o LEFT JOIN FETCH o.orderItems WHERE o.user.email = :email")
-    Set<Order> findByUserEmail(@Param("email")String email);
+    Set<Order> findByUserEmail(@Param("email") String email);
 }
