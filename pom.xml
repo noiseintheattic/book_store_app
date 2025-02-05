@@ -172,12 +172,9 @@
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
-
             </plugin>
 
-
             <plugin>
-
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>3.3.0</version>
@@ -199,17 +196,26 @@
             </configuration>
             </plugin>
 
+            <!--
             <plugin>
                 <groupId>org.liquibase</groupId>
                 <artifactId>liquibase-maven-plugin</artifactId>
                 <version>${liquibase.version}</version>
             </plugin>
+            -->
 
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>3.4.1</version>
                 <configuration>
+                    <excludeDevtools>false</excludeDevtools>
+                    <!--
                     <finalName>book_store_app</finalName>
+                    -->
+                    <layers>
+                        <enabled>true</enabled>
+                    </layers>
                     <excludes>
                         <exclude>
                             <groupId>org.projectlombok</groupId>
