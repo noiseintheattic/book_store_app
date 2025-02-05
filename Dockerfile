@@ -1,7 +1,7 @@
 # Builder stage
 FROM openjdk:20-jdk-slim AS builder
 WORKDIR application
-ARG JAR_FILE=target/*.jar
+ARG JAR_FILE=target/book_store_app-0.0.1-SNAPSHOT.jar
 COPY ${JAR_FILE} application.jar
 RUN java -Djarmode=layertools -jar application.jar extract
 
@@ -13,5 +13,5 @@ COPY --from=builder application/spring-boot-loader/ ./
 COPY --from=builder application/snapshot-dependencies/ ./
 COPY --from=builder application/application/ ./
 
-ENTRYPOINT ["java", "-jar", "application.jar"]
+ENTRYPOINT ["java", "-cp", ".", "org.springframework.boot.loader.launch.JarLauncher"]
 EXPOSE 8080
