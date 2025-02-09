@@ -191,8 +191,7 @@ class BookControllerTest {
     @Sql(scripts = "classpath:database/book/add-three-default-books.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     @Test
-    void
-    getAll_GivenEmptyCatalog_ShouldReturnEmptyList() throws Exception {
+    void getAll_GivenEmptyCatalog_ShouldReturnEmptyList() throws Exception {
         // given
         List<BookDto> expected = new ArrayList<>();
         // when

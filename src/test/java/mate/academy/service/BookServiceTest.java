@@ -1,15 +1,19 @@
 package mate.academy.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import mate.academy.dto.book.BookDto;
 import mate.academy.dto.book.BookDtoWithoutCategoryIds;
 import mate.academy.dto.book.CreateBookRequestDto;
-import mate.academy.dto.category.CategoryDto;
 import mate.academy.exceptions.EntityNotFoundException;
 import mate.academy.mapper.BookMapper;
-import mate.academy.mapper.CategoryMapper;
 import mate.academy.model.Book;
-import mate.academy.model.Category;
-import mate.academy.repository.CategoryRepository;
 import mate.academy.repository.book.BookRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,13 +25,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class BookServiceTest {
@@ -74,13 +71,15 @@ class BookServiceTest {
 
         Mockito.when(bookRepository.findById(Mockito.anyLong()))
                 .thenReturn(Optional.of(book));
-        Mockito.when(bookMapper.toDtoWithoutCategories(Mockito.any(Book.class))).thenReturn(expected);
+        Mockito.when(bookMapper.toDtoWithoutCategories(Mockito.any(Book.class)))
+                .thenReturn(expected);
         // When
         BookDtoWithoutCategoryIds actual = bookService.getById(bookId);
         // Then
         assertNotNull(actual);
         assertEquals(expected, actual);
-        Mockito.verify(bookRepository, Mockito.times(1)).findById(bookId);
+        Mockito.verify(bookRepository, Mockito.times(1))
+                .findById(bookId);
     }
 
     @Test

@@ -144,9 +144,12 @@ class CategoryServiceTest {
         categoryDtoToUpdate.setName(updatedName);
         categoryDtoToUpdate.setDescription(updatedDescription);
 
-        Mockito.when(categoryRepository.findById(Mockito.any())).thenReturn(Optional.of(existingCategory));
-        Mockito.when(categoryRepository.save(Mockito.any(Category.class))).thenReturn(existingCategory);
-        Mockito.when(categoryMapper.toDto(Mockito.any(Category.class))).thenReturn(categoryDtoToUpdate);
+        Mockito.when(categoryRepository.findById(Mockito.any()))
+                .thenReturn(Optional.of(existingCategory));
+        Mockito.when(categoryRepository.save(Mockito.any(Category.class)))
+                .thenReturn(existingCategory);
+        Mockito.when(categoryMapper.toDto(Mockito.any(Category.class)))
+                .thenReturn(categoryDtoToUpdate);
 
         // When
         CategoryDto updatedCategoryDto = categoryService.update(3L, categoryDtoToUpdate);
@@ -162,5 +165,4 @@ class CategoryServiceTest {
                 .updateFromDto(Mockito.any(CategoryDto.class), Mockito.any(Category.class));
         Mockito.verifyNoMoreInteractions(categoryRepository, categoryMapper);
     }
-
 }
