@@ -66,7 +66,7 @@ class BookControllerTest {
             connection.setAutoCommit(true);
             ScriptUtils.executeSqlScript(
                     connection,
-                    new ClassPathResource("database/add-three-default-books.sql")
+                    new ClassPathResource("database/book/add-three-default-books.sql")
             );
         }
     }
@@ -89,14 +89,14 @@ class BookControllerTest {
             connection.setAutoCommit(true);
             ScriptUtils.executeSqlScript(
                     connection,
-                    new ClassPathResource("database/remove-all-books.sql")
+                    new ClassPathResource("database/book/remove-all-books.sql")
             );
         }
     }
 
     @WithMockUser(username = "admin@mail.com", roles = {"ADMIN", "USER"})
     @Test
-    @Sql(scripts = "classpath:database/delete-book-catch-22.sql",
+    @Sql(scripts = "classpath:database/book/delete-book-catch-22.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void createBook_ValidRequestDto_Success() throws Exception {
         // given
@@ -118,10 +118,6 @@ class BookControllerTest {
                 .setCategories(createBookRequestDto.getCategories());
 
         String jsonRequest = objectMapper.writeValueAsString(createBookRequestDto);
-        System.out.println(jsonRequest);
-        System.out.println("expected: ");
-        System.out.println(expected.toString());
-
         Category category = new Category("Novel");
         category.setId(1L);
 
@@ -136,30 +132,21 @@ class BookControllerTest {
         BookDto actual = objectMapper.readValue(
                 result.getResponse().getContentAsString(),
                 BookDto.class);
-        System.out.println("actual: ");
-        System.out.println(actual.toString());
-
-        /*
-        Assertions.assertNotNull(actual);
-        Assertions.assertNotNull(actual.getId());
-        Assertions.assertEquals(createBookRequestDto.getAuthor(), actual.getAuthor());
-        Assertions.assertEquals(createBookRequestDto.getPrice(), actual.getPrice());
-        Assertions.assertEquals(createBookRequestDto.getTitle(), actual.getTitle());
-        Assertions.assertEquals(createBookRequestDto.getIsbn(), actual.getIsbn());
-        Assertions.assertEquals(createBookRequestDto.getDescription(), actual.getDescription());
-        Assertions.assertEquals(createBookRequestDto.getCategories(), actual.getCategories());
-         */
         EqualsBuilder.reflectionEquals(expected, actual, "id");
     }
 
     @WithMockUser(username = "admin@mail.com", roles = {"ADMIN", "USER"})
     @DisplayName("Get all books")
+    @Sql(scripts = "classpath:database/book/remove-all-books.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "classpath:database/book/add-three-default-books.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Test
     void getAll_GivenBooksInCatalog_ShouldReturnAllProducts() throws Exception {
         // given
         List<BookDto> expected = new ArrayList<>();
         expected.add(new BookDto().setId(1L)
-                .setAuthor("JJ.K.Rowling")
+                .setAuthor("J.K.Rowling")
                 .setTitle("Harry Potter")
                 .setPrice(BigDecimal.valueOf(45.99))
                 .setDescription("Magic book.")
@@ -170,7 +157,7 @@ class BookControllerTest {
                 .setAuthor("Franz Kafka")
                 .setTitle("Castle")
                 .setPrice(BigDecimal.valueOf(19.99))
-                .setDescription("Great Novel.")
+                .setDescription("Great novel.")
                 .setIsbn("123456789")
                 .setCategories(List.of()));
 
@@ -178,7 +165,7 @@ class BookControllerTest {
                 .setAuthor("Franz Kafka")
                 .setTitle("The Trial")
                 .setPrice(BigDecimal.valueOf(7.99))
-                .setDescription("Great Novel.")
+                .setDescription("Great novel.")
                 .setIsbn("123456789")
                 .setCategories(List.of()));
 
@@ -190,7 +177,31 @@ class BookControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        System.out.println(result.getResponse().getContentAsString());
+        // then
+        BookDto[] actual = objectMapper
+                .readValue(result.getResponse().getContentAsByteArray(), BookDto[].class);
+        Assertions.assertEquals(expected.size(), actual.length);
+        Assertions.assertEquals(expected, Arrays.stream(actual).toList());
+    }
+
+    @WithMockUser(username = "admin@mail.com", roles = {"ADMIN", "USER"})
+    @DisplayName("Get all books")
+    @Sql(scripts = "classpath:database/book/remove-all-books.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "classpath:database/book/add-three-default-books.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @Test
+    void
+    getAll_GivenEmptyCatalog_ShouldReturnEmptyList() throws Exception {
+        // given
+        List<BookDto> expected = new ArrayList<>();
+        // when
+        MvcResult result = mockMvc.perform(
+                        MockMvcRequestBuilders.get("/api/books")
+                                .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk())
+                .andReturn();
 
         // then
         BookDto[] actual = objectMapper
@@ -234,6 +245,17 @@ class BookControllerTest {
 
         Assertions.assertNotNull(actual);
         EqualsBuilder.reflectionEquals(expected, actual);
+    }
+
+    @Test
+    @WithMockUser(username = "admin@mail.com", roles = {"ADMIN", "USER"})
+    void getBookById_NegativeId_ShouldReturnStatusNotFound() throws Exception {
+        // when
+        mockMvc.perform(
+                        MockMvcRequestBuilders.get("/api/books/-1")
+                                .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isNotFound());
     }
 
     @Test

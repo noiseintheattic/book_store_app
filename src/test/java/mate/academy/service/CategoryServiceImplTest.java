@@ -1,6 +1,7 @@
 package mate.academy.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
@@ -10,7 +11,6 @@ import mate.academy.exceptions.EntityNotFoundException;
 import mate.academy.mapper.CategoryMapper;
 import mate.academy.model.Category;
 import mate.academy.repository.CategoryRepository;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -32,8 +32,6 @@ class CategoryServiceImplTest {
     private CategoryServiceImpl categoryService;
 
     @Test
-    @DisplayName("Verify if exception will be thrown with non existing"
-            + "category")
     void getById_WithNonExisingCategory_ShouldThrowException() {
         // Given
         Long categoryId = 100L;
@@ -53,8 +51,6 @@ class CategoryServiceImplTest {
     }
 
     @Test
-    @DisplayName("Verify if correct category will be returned"
-            + "if given correct category id.")
     void getById_WithValidCategory_ShouldReturnCategory() {
         // Given
         Long categoryId = 1L;
@@ -63,24 +59,23 @@ class CategoryServiceImplTest {
         category.setName("Horror");
         category.setDescription("Scary books.");
 
+        CategoryDto expected = new CategoryDto()
+                .setId(category.getId())
+                .setName(category.getName())
+                .setDescription(category.getDescription());
+
         Mockito.when(categoryRepository.findById(Mockito.anyLong()))
                 .thenReturn(Optional.of(category));
-        CategoryDto categoryDto = categoryService.getById(categoryId);
+        Mockito.when(categoryMapper.toDto(Mockito.any(Category.class))).thenReturn(expected);
         // When
-        Exception exception = assertThrows(
-                EntityNotFoundException.class,
-                () -> categoryService.getById(categoryId)
-        );
-
+        CategoryDto actual = categoryService.getById(categoryId);
         // Then
-        String expected = "Can't find category with given id: " + categoryId;
-        String actual = exception.getMessage();
+        assertNotNull(actual);
         assertEquals(expected, actual);
         Mockito.verify(categoryRepository, Mockito.times(1)).findById(categoryId);
     }
 
     @Test
-    @DisplayName("Verify save() method works.")
     void save_WithValidCategoryRequestDto_ShouldReturnCategoryDto() {
         // Given
         CategoryDto categoryDto = new CategoryDto();
@@ -104,7 +99,6 @@ class CategoryServiceImplTest {
     }
 
     @Test
-    @DisplayName("Verify findAll() method works.")
     public void findAll_ValidPageable_ReturnsAllCategories() {
         // Given
         Category category = new Category();
@@ -133,6 +127,41 @@ class CategoryServiceImplTest {
 
         Mockito.verify(categoryRepository, Mockito.times(1)).findAll(pageable);
         Mockito.verify(categoryMapper, Mockito.times(1)).toDto(category);
+        Mockito.verifyNoMoreInteractions(categoryRepository, categoryMapper);
+    }
+
+    @Test
+    void update_WithValidCategoryRequestDto_ShouldReturnCategoryDto() {
+        // Given
+        Category existingCategory = new Category();
+        existingCategory.setId(3L);
+        existingCategory.setName("History");
+        existingCategory.setDescription("History books");
+
+        String updatedName = "Updated History";
+        String updatedDescription = "Updated History books";
+
+        CategoryDto categoryDtoToUpdate = new CategoryDto();
+        categoryDtoToUpdate.setId(existingCategory.getId());
+        categoryDtoToUpdate.setName(updatedName);
+        categoryDtoToUpdate.setDescription(updatedDescription);
+
+        Mockito.when(categoryRepository.findById(Mockito.any())).thenReturn(Optional.of(existingCategory));
+        Mockito.when(categoryRepository.save(Mockito.any(Category.class))).thenReturn(existingCategory);
+        Mockito.when(categoryMapper.toDto(Mockito.any(Category.class))).thenReturn(categoryDtoToUpdate);
+
+        // When
+        CategoryDto updatedCategoryDto = categoryService.update(3L, categoryDtoToUpdate);
+
+        // Then
+        assertNotNull(updatedCategoryDto);
+        assertEquals(updatedName, updatedCategoryDto.getName());
+        assertEquals(updatedDescription, updatedCategoryDto.getDescription());
+
+        Mockito.verify(categoryRepository, Mockito.times(1))
+                .save(Mockito.any(Category.class));
+        Mockito.verify(categoryMapper, Mockito.times(1))
+                .updateFromDto(Mockito.any(CategoryDto.class), Mockito.any(Category.class));
         Mockito.verifyNoMoreInteractions(categoryRepository, categoryMapper);
     }
 }

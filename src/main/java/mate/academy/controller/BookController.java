@@ -40,7 +40,7 @@ public class BookController {
     @GetMapping("/{id}")
     @Operation(summary = "Get a book by id", description = "Get a book with given id number")
     @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
-    public BookDtoWithoutCategoryIds getBookById(@PathVariable Long id) {
+    public BookDtoWithoutCategoryIds getBookById(@PathVariable @Valid Long id) {
         return bookService.getById(id);
     }
 
