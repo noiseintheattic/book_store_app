@@ -1,5 +1,10 @@
 package mate.academy.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.util.List;
+import java.util.Optional;
 import mate.academy.dto.category.CategoryDto;
 import mate.academy.exceptions.EntityNotFoundException;
 import mate.academy.mapper.CategoryMapper;
@@ -17,12 +22,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 @ExtendWith(MockitoExtension.class)
 class CategoryServiceImplTest {
     @Mock
@@ -31,8 +30,6 @@ class CategoryServiceImplTest {
     private CategoryMapper categoryMapper;
     @InjectMocks
     private CategoryServiceImpl categoryService;
-
-
 
     @Test
     @DisplayName("Verify if exception will be thrown with non existing"
@@ -66,10 +63,9 @@ class CategoryServiceImplTest {
         category.setName("Horror");
         category.setDescription("Scary books.");
 
-        Mockito.when(categoryRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(category));
+        Mockito.when(categoryRepository.findById(Mockito.anyLong()))
+                .thenReturn(Optional.of(category));
         CategoryDto categoryDto = categoryService.getById(categoryId);
-
-
         // When
         Exception exception = assertThrows(
                 EntityNotFoundException.class,
@@ -138,9 +134,5 @@ class CategoryServiceImplTest {
         Mockito.verify(categoryRepository, Mockito.times(1)).findAll(pageable);
         Mockito.verify(categoryMapper, Mockito.times(1)).toDto(category);
         Mockito.verifyNoMoreInteractions(categoryRepository, categoryMapper);
-
-
     }
-
-
 }

@@ -2,7 +2,6 @@ package mate.academy.service;
 
 import java.util.List;
 import java.util.Set;
-
 import mate.academy.dto.category.CategoryDto;
 import mate.academy.model.Category;
 import org.springframework.data.domain.Pageable;

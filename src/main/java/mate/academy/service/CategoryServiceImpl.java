@@ -3,7 +3,6 @@ package mate.academy.service;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import lombok.RequiredArgsConstructor;
 import mate.academy.dto.category.CategoryDto;
 import mate.academy.exceptions.DataProcessingException;

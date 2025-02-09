@@ -1,6 +1,19 @@
 package mate.academy.controller;
 
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import javax.sql.DataSource;
 import lombok.SneakyThrows;
 import mate.academy.dto.book.BookDto;
 import mate.academy.dto.book.BookDtoWithoutCategoryIds;
@@ -9,8 +22,11 @@ import mate.academy.model.Category;
 import mate.academy.repository.CategoryRepository;
 import mate.academy.service.CategoryService;
 import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.junit.jupiter.api.*;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
@@ -23,18 +39,6 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import org.testcontainers.shaded.com.google.common.net.MediaType;
-
-import javax.sql.DataSource;
-import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.*;
-
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class BookControllerTest {
@@ -42,11 +46,12 @@ class BookControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
-
     @Autowired
     private CategoryRepository categoryRepository;
     @Autowired
     private CategoryService categoryService;
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     @BeforeAll
     static void beforeAll(
@@ -66,6 +71,11 @@ class BookControllerTest {
         }
     }
 
+    @BeforeAll
+    static void beforeAll(@Autowired CategoryRepository categoryRepository) {
+        categoryRepository.save(new Category("Novel"));
+    }
+
     @AfterAll
     static void afterAll(
             @Autowired DataSource dataSource
@@ -75,7 +85,7 @@ class BookControllerTest {
 
     @SneakyThrows
     private static void teardown(DataSource dataSource) {
-        try(Connection connection = dataSource.getConnection()) {
+        try (Connection connection = dataSource.getConnection()) {
             connection.setAutoCommit(true);
             ScriptUtils.executeSqlScript(
                     connection,
@@ -84,15 +94,10 @@ class BookControllerTest {
         }
     }
 
-    @BeforeAll
-    static void beforeAll(@Autowired CategoryRepository categoryRepository) {
-        categoryRepository.save(new Category("Novel"));
-    }
-
     @WithMockUser(username = "admin@mail.com", roles = {"ADMIN", "USER"})
     @Test
     @Sql(scripts = "classpath:database/delete-book-catch-22.sql",
-    executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void createBook_ValidRequestDto_Success() throws Exception {
         // given
         CreateBookRequestDto createBookRequestDto = new CreateBookRequestDto()
@@ -188,22 +193,20 @@ class BookControllerTest {
         System.out.println(result.getResponse().getContentAsString());
 
         // then
-        BookDto[] actual = objectMapper.readValue(result.getResponse().getContentAsByteArray(), BookDto[].class);
+        BookDto[] actual = objectMapper
+                .readValue(result.getResponse().getContentAsByteArray(), BookDto[].class);
         Assertions.assertEquals(expected.size(), actual.length);
         Assertions.assertEquals(expected, Arrays.stream(actual).toList());
     }
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-
     @Test
     void checkColumnType() {
-        String sql = "SELECT COLUMN_NAME, DATA_TYPE, NUMERIC_PRECISION, NUMERIC_SCALE " +
-                "FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'books' AND COLUMN_NAME = 'price'";
+        String sql = "SELECT COLUMN_NAME, DATA_TYPE, NUMERIC_PRECISION, NUMERIC_SCALE "
+                + "FROM INFORMATION_SCHEMA.COLUMNS "
+                + "WHERE TABLE_NAME = 'books' AND COLUMN_NAME = 'price'";
         Map<String, Object> columnInfo = jdbcTemplate.queryForMap(sql);
         System.out.println(columnInfo);
     }
-
 
     @Test
     @WithMockUser(username = "admin@mail.com", roles = {"ADMIN", "USER"})
