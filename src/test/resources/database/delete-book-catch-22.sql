@@ -1,0 +1,1 @@
+DELETE FROM books WHERE title = 'Catch-22' AND author = 'Joseph Heller';

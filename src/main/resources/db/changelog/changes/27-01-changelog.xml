@@ -10,7 +10,7 @@
             <column name="is_deleted" type="BOOLEAN(1)">
                 <constraints nullable="false"/>
             </column>
-            <column name="price" type="DECIMAL(38, 2)"/>
+            <column name="price" type="DECIMAL(10, 2)"/>
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="PRIMARY"/>
             </column>

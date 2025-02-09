@@ -10,14 +10,18 @@ import mate.academy.dto.book.BookDtoWithoutCategoryIds;
 import mate.academy.dto.book.CreateBookRequestDto;
 import mate.academy.model.Book;
 import mate.academy.model.Category;
+import mate.academy.service.CategoryService;
+import mate.academy.service.CategoryServiceImpl;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Mapper(config = MapperConfig.class, uses = CategoryMapper.class)
 public interface BookMapper {
+
     @Mapping(source = "booksCategories",
             target = "categories",
             qualifiedByName = "categoriesFromModel")
@@ -25,7 +29,7 @@ public interface BookMapper {
 
     @Mapping(source = "categories",
             target = "booksCategories",
-            qualifiedByName = "categoriesFromRequest")
+            ignore = true)
     Book toModel(CreateBookRequestDto createBookRequestDto);
 
     void updateFromDto(CreateBookRequestDto createBookRequestDto, @MappingTarget Book book);
@@ -44,9 +48,8 @@ public interface BookMapper {
     @Named("categoriesFromRequest")
     default Set<Category> categoriesFromRequest(List<String> categoriesFromDto) {
         Set<Category> categories = new HashSet<>();
-        for (String s : categoriesFromDto) {
-            Category category = new Category();
-            category.setName(s);
+        for (String c : categoriesFromDto) {
+            Category category = new Category(c);
             categories.add(category);
         }
         return categories;

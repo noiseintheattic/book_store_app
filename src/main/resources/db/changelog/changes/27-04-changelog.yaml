@@ -6,5 +6,5 @@ databaseChangeLog:
       changes:
         - modifyDataType:
             columnName: price
-            newDataType: DECIMAL
+            newDataType: DECIMAL(10,2)
             tableName: books
