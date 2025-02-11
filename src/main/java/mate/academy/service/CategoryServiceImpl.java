@@ -1,6 +1,8 @@
 package mate.academy.service;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import mate.academy.dto.category.CategoryDto;
 import mate.academy.exceptions.DataProcessingException;
@@ -60,5 +62,13 @@ public class CategoryServiceImpl implements CategoryService {
         } catch (EntityNotFoundException e) {
             throw new EntityNotFoundException("Can't find category with given id: " + id, e);
         }
+    }
+
+    @Override
+    public Set<Category> getOrCreateCategories(List<String> categoryNames) {
+        return categoryNames.stream()
+                .map(name -> categoryRepository.findByName(name)
+                        .orElseGet(() -> categoryRepository.save(new Category(name))))
+                .collect(Collectors.toSet());
     }
 }
