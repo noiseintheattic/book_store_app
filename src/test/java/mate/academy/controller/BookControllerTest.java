@@ -1,6 +1,7 @@
 package mate.academy.controller;
 
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -30,6 +31,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -294,5 +296,30 @@ class BookControllerTest {
         System.out.println(actual.toString());
 
         EqualsBuilder.reflectionEquals(expected, actual);
+    }
+
+    @Test
+    @WithMockUser(username = "admin@mail.com", roles = {"ADMIN", "USER"})
+    void createBook_InvalidTitle_ShouldReturnBadRequest() throws Exception {
+        CreateBookRequestDto requestDto = new CreateBookRequestDto();
+        requestDto.setTitle("");
+        requestDto.setAuthor("Author");
+        requestDto.setPrice(BigDecimal.valueOf(5));
+
+        mockMvc.perform(post("/api/books")
+                        .content(objectMapper.writeValueAsString(requestDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(username = "admin@mail.com", roles = {"ADMIN", "USER"})
+    @Sql(scripts = "classpath:database/book/remove-all-books.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @Sql(scripts = "classpath:database/book/add-three-default-books.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void delete_ExistingId_ShouldReturnNoContent() throws Exception {
+        mockMvc.perform(delete("/api/books/1"))
+                .andExpect(status().isNoContent());
     }
 }

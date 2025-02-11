@@ -1,6 +1,7 @@
 package mate.academy.controller;
 
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -25,6 +26,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -200,5 +202,29 @@ class CategoryControllerTest {
                 result.getResponse().getContentAsString(),
                 CategoryDto.class);
         EqualsBuilder.reflectionEquals(expected, actual);
+    }
+
+    @Test
+    @WithMockUser(username = "admin@mail.com", roles = {"ADMIN", "USER"})
+    void createCategoryInvalidName_ShouldReturnBadRequest() throws Exception {
+        CategoryDto categoryDto = new CategoryDto();
+        categoryDto.setName("");
+        categoryDto.setDescription("Author");
+
+        mockMvc.perform(post("/api/categories")
+                        .content(objectMapper.writeValueAsString(categoryDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(username = "admin@mail.com", roles = {"ADMIN", "USER"})
+    @Sql(scripts = "classpath:database/category/remove-all-categories.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @Sql(scripts = "classpath:database/category/add-three-default-categories.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void deleteCategory_ExistingId_ShouldReturnNoContent() throws Exception {
+        mockMvc.perform(delete("/api/categories/1"))
+                .andExpect(status().isNoContent());
     }
 }

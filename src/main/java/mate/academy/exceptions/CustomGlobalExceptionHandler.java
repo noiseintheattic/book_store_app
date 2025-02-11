@@ -58,12 +58,8 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
     }
 
-    /*
-
     @ExceptionHandler(DataProcessingException.class)
     public ResponseEntity<String> handleDataProcessing(DataProcessingException e) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
-
-     */
 }

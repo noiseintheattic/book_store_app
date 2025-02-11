@@ -69,6 +69,7 @@ public class CategoryController {
         return categoryService.update(id, categoryDto);
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete category by id.", description = "Delete category by id.")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
