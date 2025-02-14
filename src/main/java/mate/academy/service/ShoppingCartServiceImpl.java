@@ -30,7 +30,8 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         ShoppingCart shoppingCart = shoppingCartRepository.findByUserEmail(email).orElseThrow(
                 () -> new EntityNotFoundException("Can't find user by email: " + email)
         );
-        return Optional.ofNullable(shoppingCartMapper.toDto(shoppingCart));
+        ShoppingCartDto shoppingCartDto = shoppingCartMapper.toDto(shoppingCart);
+        return Optional.ofNullable(shoppingCartDto);
     }
 
     @Override
@@ -38,7 +39,14 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     public ShoppingCartDto add(String email, Book book) {
         CartItem cartItem = new CartItem();
         cartItem.setBook(book);
-        cartItem.setQuantity(cartItem.getQuantity() + 1);
+        if (shoppingCartRepository.findByUserEmail(email).isPresent()
+                && shoppingCartRepository.findByUserEmail(email)
+                .get().getCartItems().contains(book)) {
+            cartItem.setQuantity(cartItem.getQuantity() + 1);
+        } else {
+            cartItem.setQuantity(1);
+        }
+        cartItemRepository.save(cartItem);
 
         if (shoppingCartRepository.findByUserEmail(email).isEmpty()) {
             ShoppingCart shoppingCart = new ShoppingCart();
@@ -64,7 +72,9 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     public ShoppingCartDto updateItemsSet(String email) {
         ShoppingCart shoppingCart = shoppingCartRepository
                 .findByUserEmail(email)
-                .orElseThrow();
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Can't find shopping cart for email: "
+                + email));
         shoppingCartRepository.save(shoppingCart);
         return shoppingCartMapper.toDto(shoppingCart);
     }
@@ -74,7 +84,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         ShoppingCart shoppingCartByEmail
                 = shoppingCartRepository.findByUserEmail(email).orElseThrow(
                         () -> new EntityNotFoundException(
-                                "Can't find Shopping Cart by email: "
+                                "Can't find ShoppingCart by email: "
                         + email));
         shoppingCartByEmail.getCartItems().clear();
     }

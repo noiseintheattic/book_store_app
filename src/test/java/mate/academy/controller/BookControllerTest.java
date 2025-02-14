@@ -21,7 +21,6 @@ import mate.academy.dto.book.BookDtoWithoutCategoryIds;
 import mate.academy.dto.book.CreateBookRequestDto;
 import mate.academy.model.Category;
 import mate.academy.repository.CategoryRepository;
-import mate.academy.service.CategoryService;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
@@ -48,10 +47,6 @@ class BookControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
-    @Autowired
-    private CategoryRepository categoryRepository;
-    @Autowired
-    private CategoryService categoryService;
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
