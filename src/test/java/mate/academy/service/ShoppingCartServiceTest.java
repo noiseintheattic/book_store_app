@@ -20,6 +20,7 @@ import mate.academy.model.User;
 import mate.academy.repository.CartItemRepository;
 import mate.academy.repository.ShoppingCartRepository;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -86,6 +87,7 @@ class ShoppingCartServiceTest {
         user.setShoppingCart(shoppingCart);
     }
 
+    @DisplayName("Given shopping cart, check if return right shopping cart for user")
     @Test
     void findByEmail_GivenExistingShoppingCart_ShouldReturnShoppingCartDto() {
         // given
@@ -104,6 +106,8 @@ class ShoppingCartServiceTest {
         assertEquals(expected, actual.get());
     }
 
+    @DisplayName("Trying to add cart item to shopping cart, "
+            + "check if item is correctly added to shopping cart")
     @Test
     void add_existingShoppingCart_ShouldReturnShoppingCartDto() {
         // given
@@ -128,6 +132,8 @@ class ShoppingCartServiceTest {
         assertEquals(expected, actual);
     }
 
+    @DisplayName("Given existing user with shopping cart, "
+            + "check if updating and returning correctly mapped shopping cart.")
     @Test
     void updateItemsSet_ExistingShoppingCart_ShouldReturnShoppingCartDto() {
         // given
@@ -149,6 +155,8 @@ class ShoppingCartServiceTest {
         assertEquals(expected, actual);
     }
 
+    @DisplayName("Given not existing user, "
+            + "check if correct exception is thrown.")
     @Test
     void updateItemsSet_NotExistingShoppingCart_ShouldThrowEntityNotFoundException() {
         // given
@@ -160,6 +168,8 @@ class ShoppingCartServiceTest {
                 () -> shoppingCartServiceImpl.updateItemsSet(notExistingUser));
     }
 
+    @DisplayName("Given existing user with shopping cart and 2 items inside, "
+            + "check if items are removed from shopping cart")
     @Test
     void clearCartItems_ExistingShoppingCart_ShouldClearItems() {
         // given
@@ -180,13 +190,16 @@ class ShoppingCartServiceTest {
                         .setDeleted(false))
                 .setCartItems(items);
         Mockito.when(shoppingCartRepository.findByUserEmail(email2))
-                .thenReturn(Optional.of(shoppingCart));
+                .thenReturn(Optional.of(secondShoppingCart));
         // when
         shoppingCartServiceImpl.clearItems(email2);
         // then
-        assertTrue(shoppingCart.getCartItems().isEmpty());
+        assertTrue(secondShoppingCart.getCartItems().isEmpty());
     }
 
+    @DisplayName("Given not existing user (so, with no shopping cart) "
+            + "and trying to clear items in shopping cart, "
+            + "check if correct exception is thrown.")
     @Test
     void clearItems_NotExistingShoppingCart_ShouldThrowEntityNotFoundException() {
         // given
@@ -198,6 +211,8 @@ class ShoppingCartServiceTest {
                 () -> shoppingCartServiceImpl.clearItems(notExistingUser));
     }
 
+    @DisplayName("Given not existing userm "
+            + "check if correct excetpion is thrown.")
     @Test
     void findByEmail_NotExistingShoppingCart_ShouldThrowEntityNotFoundException() {
         // given

@@ -20,6 +20,7 @@ import mate.academy.dto.cart.ShoppingCartDto;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -98,6 +99,7 @@ class ShoppingCartControllerTest {
         }
     }
 
+    @DisplayName("Given shopping cart, check if return right shopping cart for user")
     @Test
     @WithMockUser(username = "blue@test.com", roles = {"ADMIN", "USER"})
     void getCart_existingShoppingCart_Success() throws Exception {
@@ -125,6 +127,7 @@ class ShoppingCartControllerTest {
         assertEquals(expected, actual);
     }
 
+    @DisplayName("No shopping cart for requested user, check if return status Not Found")
     @Test
     @WithMockUser(username = "red@test.com", roles = {"ADMIN", "USER"})
     void getCart_NotExistingShoppingCart_ShouldReturnStatusNotFound() throws Exception {
@@ -135,6 +138,7 @@ class ShoppingCartControllerTest {
                 .andExpect(status().isNotFound());
     }
 
+    @DisplayName("Given valid request for adding cart item, check if item is correctly added.")
     @Test
     @WithMockUser(username = "blue@test.com", roles = {"ADMIN", "USER"})
     void add_ValidRequestDto_Success() throws Exception {
@@ -157,6 +161,8 @@ class ShoppingCartControllerTest {
         EqualsBuilder.reflectionEquals(expected, actual, "id");
     }
 
+    @DisplayName("No id value defined in request for adding item, "
+            + "check if return status Bad Request")
     @Test
     @WithMockUser(username = "blue@test.com", roles = {"ADMIN", "USER"})
     void add_NullBookId_ShouldReturnBadRequest() throws Exception {
@@ -170,6 +176,8 @@ class ShoppingCartControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @DisplayName("Trying to add not existing book in DB, "
+            + "check if return status Not Found")
     @Test
     @WithMockUser(username = "blue@test.com", roles = {"ADMIN", "USER"})
     void add_NotExistingBook_ShouldReturnNotFound() throws Exception {
@@ -183,6 +191,8 @@ class ShoppingCartControllerTest {
                 .andExpect(status().isNotFound());
     }
 
+    @DisplayName("Given valid request for updating quantity of cart item, "
+            + "check if quantity will be updated")
     @Test
     @WithMockUser(username = "yellow@test.com", roles = {"ADMIN", "USER"})
     @Sql(scripts = "classpath:database/shoppingCart/remove-all-cartItems.sql",
@@ -212,12 +222,13 @@ class ShoppingCartControllerTest {
         assertEquals(expected, actual);
     }
 
+    @DisplayName("Trying to update not existing cart item, "
+            + "check if return status Not Found")
     @Test
     @WithMockUser(username = "yellow@test.com", roles = {"ADMIN", "USER"})
     void update_NotExistingCartItem_ShouldReturnNotFound() throws Exception {
-        Long cartItemId = 99L;
+        // given
         Integer quantity = 10;
-        CartItemDto expected = new CartItemDto();
         String jsonRequest = objectMapper.writeValueAsString(quantity);
         // when / then
         mockMvc.perform(put("/api/cart/cart-items/99")
@@ -227,12 +238,12 @@ class ShoppingCartControllerTest {
                 .andExpect(status().isNotFound());
     }
 
+    @DisplayName("Trying to updated quantity with negative value, "
+            + "check if return status Bad Request")
     @Test
     @WithMockUser(username = "yellow@test.com", roles = {"ADMIN", "USER"})
     void update_NegativeQuantity_ShouldReturnBadRequest() throws Exception {
-        Long cartItemId = 6L;
         Integer quantity = -10;
-        CartItemDto expected = new CartItemDto();
         String jsonRequest = objectMapper.writeValueAsString(quantity);
         // when / then
         mockMvc.perform(put("/api/cart/cart-items/99")
@@ -242,6 +253,8 @@ class ShoppingCartControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @DisplayName("Trying to delete item with given id, "
+            + "check if return status No Content")
     @Test
     @WithMockUser(username = "yellow@test.com", roles = {"ADMIN", "USER"})
     @Sql(scripts = "classpath:database/shoppingCart/remove-all-cartItems.sql",

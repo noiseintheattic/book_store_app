@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.Set;
 import mate.academy.model.ShoppingCart;
 import mate.academy.model.User;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -18,6 +19,8 @@ class ShoppingCartRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
+    @DisplayName("Given existing user with shopping cart, "
+            + "check if returning correct shopping cart from DB.")
     @Test
     void findByUserEmail_GivenExistingShoppingCart_ShouldReturnShoppingCart() {
         // given
